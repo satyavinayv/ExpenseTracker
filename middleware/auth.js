@@ -1,0 +1,27 @@
+const jsonwebtoken = require("jsonwebtoken");
+
+const auth = (req,res,next)=>{
+    // res.status(200).json({
+    //     status:"success",
+    //     message:"authentication success"
+    // });
+    // console.log(req.headers);
+    try{
+        const accessToken = req.headers.authorization.replace("Bearer ","");
+    
+        const jwt_payload = jsonwebtoken.verify(accessToken,process.env.jwt_salt);
+
+        req.user = jwt_payload;
+    }
+    catch(e)
+    {
+        res.status(401).json({
+            status:"failed",
+            message:"Unauthorized",
+        });
+        return;
+    }
+    next();
+};
+
+module.exports = auth;
